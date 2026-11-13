@@ -13,6 +13,7 @@ import { motion } from 'motion/react';
 import { PageIntroHeader } from '../components/MotionPrimitives';
 import { SuSAretFullIntro } from '../components/SuSAretFullIntro';
 import { SuSOrb } from '../components/SuSOobeAssistant';
+import { buildSuSFallbackReply, fetchJsonSafe } from '../utils/olympiadLogic';
 import type { PageRoute, SuSChatMessage } from '../types/olympiad';
 
 interface SuSPageProps {
@@ -69,7 +70,7 @@ export function SuSPage({ onNavigate }: SuSPageProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/sus/chat', {
+      const data = await fetchJsonSafe<{ reply?: string; error?: string }>('/api/sus/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -78,22 +79,24 @@ export function SuSPage({ onNavigate }: SuSPageProps) {
         }),
       });
 
-      const data = (await response.json()) as { reply?: string; error?: string };
-      if (!response.ok || !data.reply) {
-        throw new Error(data.error || 'Unable to get a response from SuS right now.');
-      }
+      const replyText =
+        data?.reply?.trim() || buildSuSFallbackReply(trimmed);
 
       const botMsg: SuSChatMessage = {
         id: `a-${Date.now()}`,
         role: 'assistant',
-        content: data.reply,
+        content: replyText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
-      setErrorMsg(
-        err instanceof Error ? err.message : 'Unable to connect to SuS Help-Service.'
-      );
+    } catch {
+      const botMsg: SuSChatMessage = {
+        id: `a-${Date.now()}`,
+        role: 'assistant',
+        content: buildSuSFallbackReply(trimmed),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages((prev) => [...prev, botMsg]);
     } finally {
       setIsLoading(false);
     }

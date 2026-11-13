@@ -69,9 +69,20 @@ function readStorage<T>(key: string, fallback: T): T {
 }
 
 function getPageFromHash(): PageRoute {
-  const cleaned = window.location.hash.replace(/^#\/?/, '').trim() as PageRoute;
-  if (VALID_PAGES.includes(cleaned)) {
-    return cleaned;
+  const hashClean = window.location.hash
+    .replace(/^#\/?/, '')
+    .split('?')[0]
+    .replace(/\/+$/, '')
+    .trim() as PageRoute;
+  if (VALID_PAGES.includes(hashClean)) {
+    return hashClean;
+  }
+  const pathClean = window.location.pathname
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '')
+    .trim() as PageRoute;
+  if (VALID_PAGES.includes(pathClean)) {
+    return pathClean;
   }
   return 'home';
 }

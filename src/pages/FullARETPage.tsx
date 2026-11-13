@@ -33,7 +33,10 @@ import type {
   PageRoute,
 } from '../types/olympiad';
 import {
+  buildFallbackAretAnalysis,
+  buildFallbackAretQuestions,
   evaluateAretPypPerformance,
+  fetchJsonSafe,
   generateReferenceId,
   validateAretAccessCode,
 } from '../utils/olympiadLogic';
@@ -288,22 +291,32 @@ export function FullARETPage({ onNavigate }: FullARETPageProps) {
     setBatchGraded(false);
     setPageOffset(0);
     try {
-      const resp = await fetch('/api/aret/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topic,
-          difficulty,
-          style,
-          count: questionCount,
-          weakTopics: evaluation?.weakTopics ?? [],
-          evaluation,
-        }),
-      });
-      const data = (await resp.json()) as { questions?: AretGeneratedQuestion[] };
-      if (Array.isArray(data.questions)) {
-        setGeneratedQuestions(data.questions);
-      }
+      const data = await fetchJsonSafe<{ questions?: AretGeneratedQuestion[] }>(
+        '/api/aret/generate',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topic,
+            difficulty,
+            style,
+            count: questionCount,
+            weakTopics: evaluation?.weakTopics ?? [],
+            evaluation,
+          }),
+        }
+      );
+      const questions =
+        Array.isArray(data?.questions) && data.questions.length > 0
+          ? data.questions
+          : buildFallbackAretQuestions({
+              topic,
+              difficulty,
+              style,
+              count: questionCount,
+              weakTopics: evaluation?.weakTopics ?? [],
+            });
+      setGeneratedQuestions(questions);
     } finally {
       setIsGenerating(false);
     }
@@ -336,7 +349,7 @@ export function FullARETPage({ onNavigate }: FullARETPageProps) {
 
     setIsAnalyzing(true);
     try {
-      const resp = await fetch('/api/aret/analyze', {
+      const data = await fetchJsonSafe<AretAnalysisResponse>('/api/aret/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -346,10 +359,16 @@ export function FullARETPage({ onNavigate }: FullARETPageProps) {
           customDifficulty: difficulty,
         }),
       });
-      const data = (await resp.json()) as AretAnalysisResponse;
-      if (data.aiNarrative) {
-        setAnalysis(data);
-      }
+      setAnalysis(
+        data && data.aiNarrative
+          ? data
+          : buildFallbackAretAnalysis({
+              evaluation: baseEval,
+              customAccuracyPct,
+              customTopic: topic,
+              customDifficulty: difficulty,
+            })
+      );
     } finally {
       setIsAnalyzing(false);
     }

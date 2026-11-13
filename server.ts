@@ -11,7 +11,11 @@ import {
   saveOrder,
   saveRegistration,
 } from './src/server/recordsStore.ts';
-import { buildFallbackAretQuestions } from './src/utils/olympiadLogic.ts';
+import {
+  buildFallbackAretAnalysis,
+  buildFallbackAretQuestions,
+  buildSuSFallbackReply,
+} from './src/utils/olympiadLogic.ts';
 import type {
   AretDifficulty,
   AretEvaluationResult,
@@ -154,25 +158,6 @@ async function startServer() {
     }
   });
 
-  function buildSuSFallbackReply(query: string): string {
-    const q = query.toLowerCase();
-    if (q.includes('aret') || q.includes('1299') || q.includes('sept')) {
-      return 'ARET (Automated Responsive Educational Tool) is an entirely new X Olympiad Foundation launch scheduled for September 2026, starting at ₹1,299. Powered by SuS, ARET evaluates your IXMO Previous Year Paper (PYP) performance, lets you generate custom questions by choosing topic, difficulty, question style, and count, and delivers an in-depth performance analysis report. You can try the live preview on the ARET page right now.';
-    }
-    if (q.includes('admit') || q.includes('sample')) {
-      return '2026 Admit Cards will be announced soon (opening from the 10 November schedule window), and official full-length Sample Papers will also be shared soon. In the meantime, you can track the Admit Card countdown on the Admit Card page and practice interactive sample previews on the Home page.';
-    }
-    if (q.includes('price') || q.includes('shop') || q.includes('bank') || q.includes('pyp') || q.includes('bundle') || q.includes('promo') || q.includes('coupon') || q.includes('free')) {
-      return 'In the X Olympiad Study Material Shop (INR ₹): 1 Chapter Question Bank is ₹100, 2 Question Banks are ₹100, and 10 Question Banks are ₹500 (IXEO and IXCO banks are unavailable). Last 8 Years PYP Bundles are ₹499 for 1 or ₹500 for 2. Use promo code FREEMATERIAL at Checkout for 100% off study materials (or OLYMPIAD15 / SCHOLAR10 / XOF10), and use coupon FREEXOLYMPIAD on the Registration form for free Olympiad enrollment.';
-    }
-    if (q.includes('date') || q.includes('close') || q.includes('deadline') || q.includes('exam') || q.includes('when')) {
-      return '2026 Olympiad Schedule: IXSO (closes 26 Nov, exam 19 Dec), IXEO (closes 26 Nov, exam 30 Nov), IXMO (closes 27 Nov, exam 20 Dec), IXCO (closes 27 Nov, exam 02 Dec), and IXCompetO for Grades 10–12 (closes 05 Dec, exam 27 Dec). Submitted registrations receive an email confirmation within 24 working hours.';
-    }
-    if (q.includes('negative') || q.includes('mark') || q.includes('structure') || q.includes('ixmo')) {
-      return 'IXMO carries 50 questions for 100 marks in 1 Hr 20 Min: Logic (10q × 1m, -1 negative), Mathematics (20q × 1.5m, -1 negative), Advanced Mathematics (10q × 2m, no negative), and HOTS (10q × 4m, no negative). Across IXSO, IXEO, and IXCO, negative marking (-1) applies only to foundational Section 1/2 areas—never on HOTS.';
-    }
-    return 'X Olympiad Foundation (established 2018 in Ghaziabad, UP) conducts IXMO, IXSO, IXEO, IXCO (Classes 5–12), and IXCompetO (Grades 10–12). You can register via the Registration page (use coupon FREEXOLYMPIAD for free entry), shop Question Banks & 8-Year PYPs (use promo FREEMATERIAL), check the Admit Card countdown, or preview ARET (Sept 2026, starting ₹1,299; unlock Full Suite with ARETCODESAMPLE).';
-  }
 
   // SuS (Systematic User Help-Service) Gemini Chat Endpoint
   app.post('/api/sus/chat', async (req, res) => {
@@ -447,33 +432,12 @@ Rules:
       return res.status(400).json({ error: 'Evaluation summary is required.' });
     }
 
-    const fallbackResponse = {
-      readinessBadge:
-        evaluation.accuracyPct >= 75
-          ? 'IXMO Honours Contender'
-          : evaluation.accuracyPct >= 50
-            ? 'Developing Olympiad Strategist'
-            : 'Foundation Builder',
-      aiNarrative: `Your IXMO PYP diagnostic yielded ${evaluation.netScore}/${evaluation.maxScore} marks (${evaluation.accuracyPct}% accuracy, ${evaluation.riskIndex} negative-marking risk). ${
-        evaluation.weakTopics.length > 0
-          ? `Primary improvement areas detected in ${evaluation.weakTopics.join(' and ')}.`
-          : 'Strong command demonstrated across all evaluated IXMO topics.'
-      }${
-        typeof customAccuracyPct === 'number'
-          ? ` On your SuS ${customTopic} (${customDifficulty}) drill, you achieved ${customAccuracyPct}% accuracy.`
-          : ''
-      }`,
-      studyPlan: [
-        evaluation.weakTopics[0]
-          ? `Prioritize chapter drills on ${evaluation.weakTopics[0]} before attempting timed full-length PYPs.`
-          : 'Maintain timed HOTS drills (4 marks per question, zero negative marking).',
-        evaluation.negativePenalty > 0
-          ? 'In Logic and Mathematics sections (-1 penalty), skip uncertain guesses if elimination leaves more than two options.'
-          : 'Your negative-marking discipline is solid; shift focus toward maximizing 4-mark HOTS accuracy.',
-        'Pair targeted IXMO Chapter Question Banks (₹100, or use code FREEMATERIAL) with the IXMO Last 8 Years PYP Bundle.',
-      ],
-      source: 'deterministic' as const,
-    };
+    const fallbackResponse = buildFallbackAretAnalysis({
+      evaluation,
+      customAccuracyPct,
+      customTopic,
+      customDifficulty,
+    });
 
     const ai = getGeminiClient();
     if (!ai) {

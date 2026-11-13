@@ -22,6 +22,8 @@ import {
   getAretIntroSequenceSpec,
   buildSubscriberDocumentPayload,
   getSuSAretIntroPhases,
+  buildSuSFallbackReply,
+  buildFallbackAretAnalysis,
 } from './olympiadLogic';
 import {
   OLYMPIADS,
@@ -350,5 +352,26 @@ test('buildSubscriberDocumentPayload normalizes emailLower, strips undefined fie
   assert.equal(doc.couponOrPromo, 'FREEMATERIAL');
   assert.equal(doc.phone, '');
   assert.deepEqual(doc.itemsOrTracks, ['Number Systems Question Bank']);
+});
+
+test('buildSuSFallbackReply and buildFallbackAretAnalysis provide accurate static fallbacks for Netlify', () => {
+  const aretReply = buildSuSFallbackReply('Tell me about ARET 1299');
+  assert.ok(aretReply.includes('1,299'));
+  assert.ok(aretReply.includes('ARETCODESAMPLE'));
+
+  const shopReply = buildSuSFallbackReply('What is the shop bundle price?');
+  assert.ok(shopReply.includes('FREEMATERIAL'));
+  assert.ok(shopReply.includes('500'));
+
+  const evalSample = evaluateAretPypPerformance(ARET_IXMO_PYP_SET, {}, SHOP_PRODUCTS);
+  const analysis = buildFallbackAretAnalysis({
+    evaluation: evalSample,
+    customAccuracyPct: 80,
+    customTopic: 'Euclidean Geometry',
+    customDifficulty: 'HOTS Challenge',
+  });
+  assert.equal(analysis.source, 'deterministic');
+  assert.ok(analysis.aiNarrative.includes('Euclidean Geometry'));
+  assert.equal(analysis.studyPlan.length, 3);
 });
 

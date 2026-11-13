@@ -10,7 +10,12 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import type { OobeMood, SuSOobeGuidance } from '../utils/olympiadLogic';
+import {
+  buildSuSFallbackReply,
+  fetchJsonSafe,
+  type OobeMood,
+  type SuSOobeGuidance,
+} from '../utils/olympiadLogic';
 
 interface SuSOobeAssistantProps {
   guidance: SuSOobeGuidance;
@@ -144,23 +149,17 @@ export function SuSOobeAssistant({
     if (!trimmed || asking) return;
     setAsking(true);
     try {
-      const resp = await fetch('/api/sus/chat', {
+      const data = await fetchJsonSafe<{ reply?: string }>('/api/sus/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: `[Candidate currently in ${contextTag}, ${guidance.stepTitle}] ${trimmed}`,
         }),
       });
-      const data = (await resp.json()) as { reply?: string };
-      setReply(
-        data.reply ||
-          'Use FREEXOLYMPIAD for free Olympiad registration or FREEMATERIAL for free Question Banks & 8-Year PYPs.'
-      );
+      setReply(data?.reply?.trim() || buildSuSFallbackReply(trimmed));
       setQuestion('');
     } catch {
-      setReply(
-        'Offline help note: You will be contacted via email within 24 working hours once submitted.'
-      );
+      setReply(buildSuSFallbackReply(trimmed));
     } finally {
       setAsking(false);
     }

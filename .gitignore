@@ -6,4 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+/data/*.json
+!/src/data/
+!/src/data/**
 .playwright-cli/
+.aistudio/

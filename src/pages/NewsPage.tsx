@@ -9,7 +9,7 @@ import type {
   PageRoute,
   RegistrationRecord,
 } from '../types/olympiad';
-import { findStudentResult } from '../utils/olympiadLogic';
+import { fetchJsonSafe, findStudentResult } from '../utils/olympiadLogic';
 import { fetchRecordsFromFirebase } from '../lib/firebase';
 import { PageIntroHeader, SectionCardSweep } from '../components/MotionPrimitives';
 
@@ -63,9 +63,7 @@ export function NewsPage({ registrations, orders, onNavigate }: NewsPageProps) {
     setRecordLoading(true);
     try {
       const [apiOutcome, fbOutcome] = await Promise.allSettled([
-        fetch(`/api/records?email=${encodeURIComponent(trimmed)}`).then((r) =>
-          r.ok ? (r.json() as Promise<LookupResponse>) : null
-        ),
+        fetchJsonSafe<LookupResponse>(`/api/records?email=${encodeURIComponent(trimmed)}`),
         fetchRecordsFromFirebase(trimmed),
       ]);
 

@@ -30,7 +30,10 @@ import type {
   PageRoute,
 } from '../types/olympiad';
 import {
+  buildFallbackAretAnalysis,
+  buildFallbackAretQuestions,
   evaluateAretPypPerformance,
+  fetchJsonSafe,
   generateReferenceId,
   validateAretAccessCode,
 } from '../utils/olympiadLogic';
@@ -188,29 +191,35 @@ export function ARETPage({ onNavigate, onInquirySaved }: ARETPageProps) {
     setGenAnswers({});
     setGenChecked({});
     try {
-      const resp = await fetch('/api/aret/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topic: customTopic,
-          difficulty: customDifficulty,
-          style: customStyle,
-          count: customCount,
-          weakTopics: evaluation?.weakTopics ?? [],
-          email: waitlistEmail,
-          evaluation,
-        }),
-      });
-      const data = (await resp.json()) as {
-        questions?: AretGeneratedQuestion[];
-      };
-      if (Array.isArray(data.questions)) {
-        setGeneratedQuestions(data.questions);
-        setGenTryDone(true);
-        markPreviewConsumed();
-      }
-    } catch {
-      // Handled gracefully if offline
+      const data = await fetchJsonSafe<{ questions?: AretGeneratedQuestion[] }>(
+        '/api/aret/generate',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topic: customTopic,
+            difficulty: customDifficulty,
+            style: customStyle,
+            count: customCount,
+            weakTopics: evaluation?.weakTopics ?? [],
+            email: waitlistEmail,
+            evaluation,
+          }),
+        }
+      );
+      const questions =
+        Array.isArray(data?.questions) && data.questions.length > 0
+          ? data.questions
+          : buildFallbackAretQuestions({
+              topic: customTopic,
+              difficulty: customDifficulty,
+              style: customStyle,
+              count: customCount,
+              weakTopics: evaluation?.weakTopics ?? [],
+            });
+      setGeneratedQuestions(questions);
+      setGenTryDone(true);
+      markPreviewConsumed();
     } finally {
       setIsGenerating(false);
     }
@@ -242,7 +251,7 @@ export function ARETPage({ onNavigate, onInquirySaved }: ARETPageProps) {
 
     setIsAnalyzing(true);
     try {
-      const resp = await fetch('/api/aret/analyze', {
+      const data = await fetchJsonSafe<AretAnalysisResponse>('/api/aret/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -252,13 +261,19 @@ export function ARETPage({ onNavigate, onInquirySaved }: ARETPageProps) {
           customDifficulty,
         }),
       });
-      const data = (await resp.json()) as AretAnalysisResponse;
-      if (data.aiNarrative) {
-        setAnalysis(data);
-        setAnalyzeTryDone(true);
-        setPersistedLock(true);
-        markPreviewConsumed();
-      }
+      const resolved =
+        data && data.aiNarrative
+          ? data
+          : buildFallbackAretAnalysis({
+              evaluation: currentEval,
+              customAccuracyPct,
+              customTopic,
+              customDifficulty,
+            });
+      setAnalysis(resolved);
+      setAnalyzeTryDone(true);
+      setPersistedLock(true);
+      markPreviewConsumed();
     } finally {
       setIsAnalyzing(false);
     }
