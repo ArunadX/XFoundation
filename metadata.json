@@ -1,0 +1,6 @@
+{
+  "name": "X Olympiad Foundation",
+  "description": "Official interactive portal for the X Olympiad Foundation featuring exam registration, schedules, syllabus explorer, sample papers, question-wise test bank, chapter-wise store, results lookup, and official news.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

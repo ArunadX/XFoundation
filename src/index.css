@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: #06080D;
+    color: #F1F5F9;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid #00F0FF;
+    outline-offset: 2px;
+  }
+}
+
+/* Subtle architectural grid and neon edge utilities */
+.neon-border-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.neon-border-active {
+  border: 1px solid rgba(0, 240, 255, 0.55);
+  box-shadow: 0 0 22px -6px rgba(0, 240, 255, 0.28);
+}
+
+.neon-cta {
+  background-color: #00F0FF;
+  color: #05080F;
+  box-shadow: 0 0 24px -6px rgba(0, 240, 255, 0.55);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.neon-cta:hover {
+  background-color: #38F5FF;
+  box-shadow: 0 0 28px -4px rgba(0, 240, 255, 0.72);
+}
+
+.neon-cta:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

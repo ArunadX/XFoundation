@@ -1,0 +1,93 @@
+A. Information				X Olympiad Foundation 
+About the X Olympiad Foundation: 
+The X Olympiad Foundation was founded in 2018 in Ghaziabad Uttar Pradesh India to foster young minds by conducting Olympiads across various fields , 
+
+B. Olympiads of the X Olympiad Foundation [Currently Available as of 2026]
+International X Mathematics Olympiad 
+International X Science Olympiad 
+International X English Olympiad 
+International X Cyber Olympiad 
+[For Grades 10 to 12]: International X Competetive Olympiad 
+
+C. Syllabus Of Each Olympiad WITH WEIGHTAGE 
+A. Intnernational X Mathemmatics Olympiad 
+Structure : Total 50 Questions, Time 1 hour 20 minutes 
+Structure:
+Logic had 10 questions of 1 mark each 
+Mathematics has 20 Questions of 1.5 marks each 
+Advanced Mathematics has 10 Questions of 2 marks each and 
+HOTS has 10 questions of 4 Marks each 
+Grand Total: 100 Marks 
+Negative marking is of 1 marks only in logic and mathematics 
+
+Syllabus : 
+Number System, Polynomials, Sequence and Progressions, Algebraic expressions and identities, Linear ewuation in 2 variables , coordinate and Euclid geometry , lines and angles, triangles, 4-gons, circles, mensuration of 2d and 3d shapes, statistics, probability, area of ||gm and triangles 
+
+Sample Question from PYP
+Let x, y, z be three numbers such that x + 2y + 3z = 100, 3x + 3 + 2z = 100 and 2x + 3y + z is also equal to 100, Which statement is FALSE?
+|: x:y:z is 1:2:4 			||: z = 2x – y
+a. Only |		b. Only ||		c. Both		d. None
+
+International X Science Olympiad:
+There are a total of 50 questions in 1 hour 20 minutes 
+Science : 20 Questions of 1 mark each 
+Advanced Science : 20 Questions of 2 marks each 
+HOTS: 10 Qustions of 4 marks each 
+Grand Total: 100 Marks 
+Only the science section has a negative marking of 1 Marks
+
+Syllabus of IXSO 
+Physichs: Force , Motion, Work and energy, thrust and pressure, gravitation, Tension in ropes and pulleys, Sound, Waves
+Chemistry: Matter around us, sepration of matter, journey inside the atom, foundation of matter: atom
+Biology: Cells, tissues, , reproduction, classification of organisams: diversity
+ IXSO PYP Question
+Refer to the given scenario : The mass of two bodies A and B are in the ratio 3:7 , while the force applied on them [FA and FB] are in the ratio 12:14 
+The ratio of their acceleration will be, 
+A. 4:3		b. 3:$		c. 2:7		d. None of the above
+
+IXEO Syllabus : Not announced 
+Strcture: 
+Vocabulary Comprehension : 10 Questions of 1 marks each		Applied English : 10 Questions of 2 Marks each 
+Grammar Knowledge : 10 Questions  of 2 Marks each 		Reading: 10 Questions of 1 marks each 
+HOTS: 10 Questions of 4 marks each 
+There is negative maeking in only Vocabulary and READING 
+Sample Question :
+His ostensibly magnanimous gesture concealed a rather insidious ulterior motive, leaving even the most perspicacious observers momentarily flummoxed. Nevertheless, his equivocal explanation only exacerbated the mounting suspicion.
+Q. What does the word "perspicacious" most nearly mean?
+A) Exceptionally cautious and hesitant
+B) Having keen insight and discernment
+C) Deliberately deceptive and manipulative
+D) Excessively critical and judgemental
+
+IXCO 
+Syllabus not announced 
+Structure :
+Software and Operating System Knowledge: 20  Questions of 1 mark each 
+Coding Knowledge: 15 Questions of 2  marks each 
+Application : 10 Questions  of  3  Marks Each 
+HOTS : 5 Questions of 4 Marks each 
+Only Software and OS Knwoledge has a negative marking of 1
+Sample PYP
+Q. Which of the following statements about Python's Global Interpreter Lock (GIL) is TRUE?
+A) It allows multiple threads to execute Python bytecode simultaneously in a standard GIL-enabled CPython interpreter.
+B) It prevents multiple processes from running simultaneously.
+C) It ensures that only one thread executes Python bytecode at a time in a standard GIL-enabled CPython interpreter.
+D) It prevents race conditions entirely, making locks unnecessary.
+
+
+
+
+
+SCHEDULE OF THE OLYMPIADS 
+IXMO ON 20 DEC					REGISTRATION CLOSING ON 27NOV
+								
+
+IXSO ON 19DEC					26 NOV
+IXEO 26 NOV						30 NOV
+IXCO 27 NOV						2 DEC
+
+
+
+
+
+
